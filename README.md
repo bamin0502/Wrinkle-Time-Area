@@ -14,6 +14,8 @@
 <!--Rider--><img src="https://img.shields.io/badge/Rider-000000?style=flat-square&logo=Rider&logoColor=white"/>
 <!--C#--><img src="https://img.shields.io/badge/c%23-%23239120.svg?style=flat-square&logo=C-sharp&logoColor=white"/>
 <!--Git Hub--><img src="https://img.shields.io/badge/git-F05032?style=flat-square&logo=git&logoColor=white"></br>
+# 빌드본 
+- ### 빌드본 추가 예정
 # 플레이 영상 링크
 - https://youtu.be/xvQ1XfMKI4k
 # 플레이 화면
