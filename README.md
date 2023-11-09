@@ -48,5 +48,4 @@
 - The Lost Temple
 - POLYGON Particle FX - Low Poly 3D Art by Synty       
 
-# 아직 프로젝트가 끝나지 않아서 끝나는 대로 업로드 예정입니다.
 
