@@ -27,7 +27,8 @@
 
 
 # 빌드본 
-- ### 빌드본 추가 예정
+- ### 용량 문제로 인한 링크 업로드
+##### https://drive.google.com/file/d/14sxA8Sp0y2iOOiTS7-fpw7kdoGDV0flp/view?usp=sharing
 
 # 플레이 영상 링크
 - https://youtu.be/xvQ1XfMKI4k
@@ -46,16 +47,16 @@
   
   
 # 현재 있는 문제점
-- 처음에 서버 접속 실패하는 문제 (해당 프로그램을 다시 종료하고 실행하면 됩니다.)
+- 처음에 서버 접속 실패하는 문제 (2023-11-16일 기준 수정 완료)
 - 방장이 나가면 다시 들어온 사람이 방장이 여러명으로 보이는 현상
 - 서버가 좋지 않은 관계로 일부 끊김이 발생할수 있습니다!
+- 예상치 못한 버그나 테스트 하면서 발견하지 못한 버그가 발생할 수도 있습니다.
 
 # 플레이 시연 환경 사양들
 #### 이 이하 사양을 제외한 나머지에서는 테스트 하지 못했습니다. 노트북 기본 내장 그래픽으로는 힘들 수도 있습니다.
 - Cpu= AMD Ryzen 5800x, Gpu=RTX 3070TI, Ram=32GB
 - Cpu= Intel i5-9500, Gpu=Geforce GTX 1070, Ram=16GB
 - Cpu= Intel i5-6500, Gpu=Geforce GTX 1050, Ram=16GB
-
 
 # 유로 에셋 사용 내역
 #### 해당 프로젝트에 사용된 에셋들은 전부 구매 완료된 에셋들입니다.
@@ -69,5 +70,18 @@
 - 100 Special Skills Effects
 - The Lost Temple
 - POLYGON Particle FX - Low Poly 3D Art by Synty       
+
+# 저작권 출처 표시 
+### 출처 표시
+#### Font:넥슨 LV.1,LV2 고딕
+#### http://levelup.nexon.com/font/index.aspx
+
+#### BGM: 로스트아크(Lost Survival / LOST ARK Official Soundtrack)
+#### https://www.youtube.com/watch?v=bSvufwVtZjo
+#### 이 게임은 뮤팟이 제작한 배경음악을 사용했습니다
+#### Battle of Boss - https://youtu.be/1FoCvK77O8U
+#### Over And Over - Download: https://www.mewpot.com/songs/6011
+#### 최대한 적긴 적었으나 까먹음등의 문제로 쓰지못한 것들이 있을 수도 있습니다!
+
 
 
