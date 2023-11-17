@@ -29,7 +29,7 @@
 # 빌드본 
 - ### 용량 문제로 인한 링크 업로드
 ##### https://drive.google.com/file/d/14sxA8Sp0y2iOOiTS7-fpw7kdoGDV0flp/view?usp=sharing
-
+###### 해당 위에 있는 링크에서 다운받거나 위에 있는 파일받기에서 받으셔도됩니다!
 # 플레이 영상 링크
 - https://youtu.be/xvQ1XfMKI4k
 
