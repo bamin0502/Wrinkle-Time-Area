@@ -25,11 +25,12 @@
 <!--C#-->
 <img src="https://img.shields.io/badge/c%23-%23239120.svg?style=flat-square&logo=C-sharp&logoColor=white"/>
 
+#### 코드 내역은 파일 내역중에 Script 폴더안에 넣어두었습니다
 
 # 빌드본 
 - ### 용량 문제로 인한 링크 업로드
 ##### https://drive.google.com/file/d/14sxA8Sp0y2iOOiTS7-fpw7kdoGDV0flp/view?usp=sharing
-
+###### 해당 위에 있는 링크에서 다운받거나 맨 위 오른쪽 상단에 있는 Code에서 Download ZIP을 이용해서 다운받으시면 됩니다!
 # 플레이 영상 링크
 - https://youtu.be/xvQ1XfMKI4k
 
