@@ -26,7 +26,7 @@
 <img src="https://img.shields.io/badge/c%23-%23239120.svg?style=flat-square&logo=C-sharp&logoColor=white"/>
 
 #### 코드 내역은 파일 내역중에 Script 폴더안에 넣어두었습니다
-##### 커밋내역은 https://github.com/bamin0502/3D-ProJect으로 보실 수 있습니다!
+##### 커밋내역은 https://github.com/bamin0502/3D-ProJect 으로 보실 수 있습니다!
 
 # 빌드본 
 - ### 용량 문제로 인한 링크 업로드
