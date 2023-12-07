@@ -1,13 +1,8 @@
 # 프로젝트 명
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Playpen+Sans&size=50&pause=500&color=7CF5F7&center=%EA%B1%B0%EC%A7%93&vCenter=%EA%B1%B0%EC%A7%93&multiline=true&repeat=%EC%A7%84%EC%8B%A4&random=%EA%B1%B0%EC%A7%93&width=500&height=70&lines=Wrinkle+Time+Area)](https://git.io/typing-svg)
 
-# 주의 사항 
 ##### 해당 프로젝트는 영리적인 목적이 아닌 포트폴리오 전용입니다. 이 해당 빌드본을 가지고 영리적으로 이용하지 마십시오
 ##### 해당 프로젝트는 타학과와의 협업을 통해서 만들어진 작품입니다.
-##### This project is for portfolio use only and not for commercial purposes. Please do not use this build for commercial purposes.
-##### このプロジェクトは、営利目的ではなく、ポートフォリオ専用です。 これらのビルドボーンを持って営利的に使用しないでください
-##### 本项目仅供作品集使用，不得用于商业目的。 请不要将此版本用于商业目的。
-##### 本項目僅供作品集使用，不得用於商業用途。 請不要將此版本用於商業目的。
 
 # 제작 기간
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Playpen+Sans&pause=500&color=6248F7&center=%EA%B1%B0%EC%A7%93&vCenter=%EA%B1%B0%EC%A7%93&multiline=true&repeat=%EC%A7%84%EC%8B%A4&random=%EA%B1%B0%EC%A7%93&width=435&height=70&lines=%ED%95%B4%EB%8B%B9+%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EB%8A%94+2023-03%EB%B6%80%ED%84%B0+;2023-11%EC%9B%94%EA%B9%8C%EC%A7%80+%EC%A7%84%ED%96%89%ED%95%9C+%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EC%9E%85%EB%8B%88%EB%8B%A4.)](https://git.io/typing-svg)
@@ -25,8 +20,21 @@
 <!--C#-->
 <img src="https://img.shields.io/badge/c%23-%23239120.svg?style=flat-square&logo=C-sharp&logoColor=white"/>
 
-#### 코드 내역은 파일 내역중에 Script 폴더안에 넣어두었습니다
-##### 커밋내역은 https://github.com/bamin0502/3D-ProJect 으로 보실 수 있습니다!
+# 담당한 구역 소개
+#### 해당 프로젝트의 팀장으로써, 코드 최적화, Time Line관련 제작 및 서버 동기화, 체력 관련 제작 및 서버 동기화, 데이터 교환 방식 구현 및 암호화, 특정 오브젝트가 플레이어에게 가리지 않도록 설정 등이 있습니다. 
+
+#### 1. 코드 최적화 및 수정
+불필요하고 비효율적인 코드를 제거 및 리팩토링 하였습니다. 또한 다른 팀원이 한 것들을 보고 최적화 및 오류등을 중점으로 최적화 및 수정을 진행하였습니다. 
+
+#### 2. Time Line 제작 및 서버 동기화
+
+#### 3. 데이터 교환 방식 구현 및 암호화
+
+#### 4. 특정 오브젝트 가림 관련
+
+
+#### 자세한 코드 내역은 파일 내역중에 Script 폴더안에 넣어두었습니다
+##### 자세한 커밋내역은 https://github.com/bamin0502/3D-ProJect 으로 보실 수 있습니다!
 
 # 빌드본 
 - ### 용량 문제로 인한 링크 업로드
