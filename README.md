@@ -838,10 +838,51 @@ public class MultiTeamstatus : MonoBehaviour
 
 # 플레이 화면
 - ## 사진과 달리 일부 달라진 점이 있을수 있습니다.
-![스크린샷 2023-11-09 202831](https://github.com/bamin0502/Wrinkle-Time-Area/assets/100828741/4d714ccd-8d78-483c-b8e6-39ae6cc20fc9)
-![스크린샷 2023-10-13 025520](https://github.com/bamin0502/Wrinkle-Time-Area/assets/100828741/49aaa0e6-a78b-4029-b578-272a39d36f99)
-![스크린샷 2023-10-13 025939](https://github.com/bamin0502/Wrinkle-Time-Area/assets/100828741/a024c2b8-06a1-4900-bb95-c1f197809225) 
-![스크린샷 2023-10-13 030717](https://github.com/bamin0502/Wrinkle-Time-Area/assets/100828741/aee9d46d-295d-4b40-a6d0-cc11695f3f6e)
+
+### 시작 화면 및 옵션 화면
+![스크린샷 2023-11-09 202831](https://github.com/bamin0502/Wrinkle-Time-Area/assets/100828741/4d714ccd-8d78-483c-b8e6-39ae6cc20fc9)<br>
+<div align="center">
+처음에 게임이 시작되면 뜨는 창  
+</div>
+
+![옵션](https://github.com/bamin0502/3D-ProJect/assets/100828741/5de6cd1d-3675-41cd-b2d7-064f30209f00)<br>
+<div align="center">
+옵션 버튼을 누르면 뜨는 창  
+</div>
+
+![스크린샷 2023-12-07 155834](https://github.com/bamin0502/3D-ProJect/assets/100828741/a0328eb0-cdaa-4340-b09d-1a35da5e2c3e)
+<div align="center">
+ALT+F4,종료 버튼을 누르면 뜨는 모달 창  
+</div>
+
+### 로비 화면 및 로그인 화면
+![로그인 창](https://github.com/bamin0502/3D-ProJect/assets/100828741/f46caef6-49f4-47d5-a0f4-67b25e845ece)<br>
+<div align="center">
+게임시작을 누르면 뜨는 창   
+</div>
+
+![로그인 실패](https://github.com/bamin0502/3D-ProJect/assets/100828741/dd801669-8a91-4a01-b829-adb9217d17db)<br>
+<div align="center">
+로그인에 실패했을때 뜨는 창  
+</div>
+
+![들어왔을때](https://github.com/bamin0502/3D-ProJect/assets/100828741/1aa84881-e9a2-4038-adf5-1e65e9584168)
+<div align="center">
+들어왔을때 뜨는 창   
+</div>
+
+### 로딩 씬 관련 이미지
+![로딩 이미지](https://github.com/bamin0502/3D-ProJect/assets/100828741/77c27787-755a-4941-b178-341a6d90e81d)
+<div align="center">
+씬 이동할때 뜨는 창
+</div>
+
+### 게임 씬 관련 이미지
+![게임씬 처음](https://github.com/bamin0502/3D-ProJect/assets/100828741/ecc720cf-9117-4a92-a23e-2b94662f5e7b)
+![게임씬 진행](https://github.com/bamin0502/3D-ProJect/assets/100828741/b8790eb4-4047-4a19-8086-b29f1be16c2a)
+![보스전](https://github.com/bamin0502/3D-ProJect/assets/100828741/9792bc05-3ae7-44c5-abb2-4722b87b058c)
+![보스전2](https://github.com/bamin0502/3D-ProJect/assets/100828741/c38d4ec8-e9ef-4731-9aa7-f60ce7d843b3)
+![보스전3](https://github.com/bamin0502/3D-ProJect/assets/100828741/45e9f7ba-d745-434b-b2bf-874ca563efc6)
 
 # 플레이 방법 소개
 - 1인에서 5인까지 가능합니다.
