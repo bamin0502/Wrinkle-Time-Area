@@ -95,23 +95,6 @@ public class StartCut : MonoBehaviour
     }
 }
 ```
-```C#
-    public void BroadCastingSecondCutSceneStart(bool isTrigger = false)
-    {
-        UserSession userSession= NetGameManager.instance.GetRoomUserSession(
-            NetGameManager.instance.m_userHandle.m_szUserID);
-        var data = new SECOND_CUTSCENE
-        {
-            USER = userSession.m_szUserID,
-            DATA = (int)DataType.SECOND_CUTSCENE,
-            CUTSCENE_NUM=1,
-            CUTSCENE_TYPE = isTrigger,
-        };
-        string sendData = LitJson.JsonMapper.ToJson(data);
-        NetGameManager.instance.RoomBroadcast(sendData);
-    }
-```
-
 첫 번째 컷신은 처음에 입장하자마자 바로 플레이되며, 다음과 같이 코드를 통해서 ESC를 통한 스킵이 가능해지고 <br>또한 몬스터가 플레이어를 감지하는 로직이 실행됩니다. <br>컷신이 플레이인 중에는 기존 브금은 재생되지 않고 멈춰있다가 컷신 재생이 끝나면 다시 재생될수 있도록 설정하였습니다. 
 ### 두번째 컷신 스크립트
 ```C#
@@ -180,16 +163,16 @@ public class EnemyCut : MonoBehaviour
 }
 ```
 ```C#
- public void BroadCastingLastCutSceneStart(bool isTrigger = false)
+    public void BroadCastingSecondCutSceneStart(bool isTrigger = false)
     {
         UserSession userSession= NetGameManager.instance.GetRoomUserSession(
             NetGameManager.instance.m_userHandle.m_szUserID);
-        var data = new LAST_CUTSCENE
+        var data = new SECOND_CUTSCENE
         {
-             USER = userSession.m_szUserID,
-             DATA = (int)DataType.LAST_CUTSCENE,
-             CUTSCENE_NUM = 2,
-             CUTSCENE_TYPE = isTrigger,
+            USER = userSession.m_szUserID,
+            DATA = (int)DataType.SECOND_CUTSCENE,
+            CUTSCENE_NUM=1,
+            CUTSCENE_TYPE = isTrigger,
         };
         string sendData = LitJson.JsonMapper.ToJson(data);
         NetGameManager.instance.RoomBroadcast(sendData);
@@ -242,7 +225,22 @@ public class FinalCut : MonoBehaviour
         Debug.LogWarning("마지막 컷신 확인");
     }
 }
-
+```
+```C#
+ public void BroadCastingLastCutSceneStart(bool isTrigger = false)
+    {
+        UserSession userSession= NetGameManager.instance.GetRoomUserSession(
+            NetGameManager.instance.m_userHandle.m_szUserID);
+        var data = new LAST_CUTSCENE
+        {
+             USER = userSession.m_szUserID,
+             DATA = (int)DataType.LAST_CUTSCENE,
+             CUTSCENE_NUM = 2,
+             CUTSCENE_TYPE = isTrigger,
+        };
+        string sendData = LitJson.JsonMapper.ToJson(data);
+        NetGameManager.instance.RoomBroadcast(sendData);
+    }
 ```
 마지막 컷신은 보스의 체력이 0이 되면 실행되도록 설정하였으며 마찬가지로 다 같이 컷신이 실행될수 있도록 설정하였습니다.
 
