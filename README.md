@@ -95,6 +95,23 @@ public class StartCut : MonoBehaviour
     }
 }
 ```
+```C#
+    public void BroadCastingSecondCutSceneStart(bool isTrigger = false)
+    {
+        UserSession userSession= NetGameManager.instance.GetRoomUserSession(
+            NetGameManager.instance.m_userHandle.m_szUserID);
+        var data = new SECOND_CUTSCENE
+        {
+            USER = userSession.m_szUserID,
+            DATA = (int)DataType.SECOND_CUTSCENE,
+            CUTSCENE_NUM=1,
+            CUTSCENE_TYPE = isTrigger,
+        };
+        string sendData = LitJson.JsonMapper.ToJson(data);
+        NetGameManager.instance.RoomBroadcast(sendData);
+    }
+```
+
 첫 번째 컷신은 처음에 입장하자마자 바로 플레이되며, 다음과 같이 코드를 통해서 ESC를 통한 스킵이 가능해지고 <br>또한 몬스터가 플레이어를 감지하는 로직이 실행됩니다. <br>컷신이 플레이인 중에는 기존 브금은 재생되지 않고 멈춰있다가 컷신 재생이 끝나면 다시 재생될수 있도록 설정하였습니다. 
 ### 두번째 컷신 스크립트
 ```C#
@@ -161,7 +178,22 @@ public class EnemyCut : MonoBehaviour
         multiBoss.StartCoroutine(multiBoss.StartThink());
     }
 }
-
+```
+```C#
+ public void BroadCastingLastCutSceneStart(bool isTrigger = false)
+    {
+        UserSession userSession= NetGameManager.instance.GetRoomUserSession(
+            NetGameManager.instance.m_userHandle.m_szUserID);
+        var data = new LAST_CUTSCENE
+        {
+             USER = userSession.m_szUserID,
+             DATA = (int)DataType.LAST_CUTSCENE,
+             CUTSCENE_NUM = 2,
+             CUTSCENE_TYPE = isTrigger,
+        };
+        string sendData = LitJson.JsonMapper.ToJson(data);
+        NetGameManager.instance.RoomBroadcast(sendData);
+    }
 ```
 <br>
 두 번째 컷신은 지정해둔 객체에 더 이상 자식(몬스터)가 없을 시에 다 같이 컷신이 실행될수 있도록 설정하였습니다.<br> 마찬가지로 플레이 중에는 기존 브금이 재생되지 않으며 기존에 지나갈수 없던 길을 지나갈수 있도록 NavMesh의 값을 변경시켜줘서 지나갈 수 있도록 설정하였고, 보스도 이 컷신이 끝난 시점부터 로직이 실행되도록 설정하였습니다. 
