@@ -23,36 +23,576 @@
 # 프로젝트 소개
 #### 해당 프로젝트의 팀장을 담당하였습니다. 
 
-#### 1. 코드 최적화 및 수정
+## 1. 코드 최적화 및 수정
 불필요하고 비효율적인 코드를 제거 및 리팩토링 하였습니다. 또한 다른 팀원이 한 것들을 보고 최적화 및 오류등을 중점으로 최적화 및 수정을 진행하였습니다. 
 
-#### 2. Time Line 제작 및 서버 동기화
+## 2. Time Line 제작 및 서버 동기화
 ![타임라인 설명](https://github.com/bamin0502/3D-ProJect/assets/100828741/acbe8630-bde2-4e92-9247-2cd42f4f05eb)
 <br>다음 사진과 같이 총 3개의 TimeLine 컷신을 제작하였습니다. 
+### 첫번째 컷신 스크립트
+```C#
+using System.Collections;
+using UnityEngine;
+using UnityEngine.Playables;
+using UnityEngine.Timeline;
+public class StartCut : MonoBehaviour
+{
+    public PlayableDirector _playableDirector;
+    public TimelineAsset FirstCut;
+    private void Awake()
+    {
+        _playableDirector = GetComponent<PlayableDirector>();
+    }
+    void Start()
+    {
+        if (_playableDirector.playableAsset == FirstCut)
+        {
+            // 컷신이 시작되면 BGM을 중지
+            SoundManager.instance.bgmAudioSource.Stop();
+        }
+        // 컷신 종료 이벤트 핸들러 등록
+        _playableDirector.stopped += OnCutsceneEnd;
+    }
+    private void Update()
+    {
+        if (!Input.GetKeyDown(KeyCode.Escape)) return;
+        // 'Esc' 키를 누르면 컷신을 넘깁니다.
+        _playableDirector.time = _playableDirector.duration;
+        StartCoroutine(SetEnemy());
+    }
+    private IEnumerator SetEnemy()
+    {
+        yield return new WaitForSeconds(1f);
 
-![첫번째 컷신](https://github.com/bamin0502/3D-ProJect/assets/100828741/9e15d72a-8b82-4900-bd3b-24b4fd1cbae9)
-![첫번째 컷신2](https://github.com/bamin0502/3D-ProJect/assets/100828741/7fb97640-8fee-447a-81e8-a8400ec02c51)
-<br>
+        foreach (GameObject enemy in MultiScene.Instance.enemyList)
+        {
+            if (enemy.TryGetComponent<MultiEnemy>(out var e))
+            {
+                e.DetectCoroutine = e.StartCoroutine(e.PlayerDetect());
+                e.AttackCoroutine = e.StartCoroutine(e.TryAttack());
+                e.SetIndex();
+            }
+            else
+            {
+                Debug.LogWarning("MultiEnemy 컴포넌트를 찾을 수 없습니다. GameObject 이름: " + enemy.name);
+            }
+        }
+        MultiScene.Instance._players.TryGetValue(MultiScene.Instance.currentUser, out GameObject player);
+        if (player == null) yield break;
+        var weaponController = player.GetComponent<MultiWeaponController>();
+        if (weaponController != null)
+        {
+            weaponController.StartCoroutine(weaponController.CheckCanPickupWeapon());
+        }
+    }
+
+    // 컷신 종료 시 호출될 이벤트 핸들러
+    private void OnCutsceneEnd(PlayableDirector director)
+    {
+        // BGM을 다시 재생
+        SoundManager.instance.bgmAudioSource.Play();
+        StartCoroutine(SetEnemy());
+    }
+}
+```
 첫 번째 컷신은 처음에 입장하자마자 바로 플레이되며, 다음과 같이 코드를 통해서 ESC를 통한 스킵이 가능해지고 <br>또한 몬스터가 플레이어를 감지하는 로직이 실행됩니다. <br>컷신이 플레이인 중에는 기존 브금은 재생되지 않고 멈춰있다가 컷신 재생이 끝나면 다시 재생될수 있도록 설정하였습니다. 
+### 두번째 컷신 스크립트
+```C#
+using System.Collections;
+using UnityEngine;
+using UnityEngine.Playables;
+using UnityEngine.Timeline;
+using UnityEngine.AI;
+public class EnemyCut : MonoBehaviour
+{
+    //실행시킬 2번째 타임라인
+    public PlayableDirector playableDirector;
+    public TimelineAsset SecondCut;
+    //해당 오브젝트에 자식이 있는지 없는지 검사시킬 오브젝트
+    public GameObject checkObject;
+    private bool isCutScene = false;
+    public MultiPlayerMovement playerMovement;
+    void Start()
+    {
+        checkObject = MultiScene.Instance.Enemy;
+        MultiScene.Instance.secondPlayableDirector = playableDirector;
+        playableDirector.stopped += OnCutsceneEnd;
+    }
+    private void Awake()
+    {
+        playableDirector = GetComponent<PlayableDirector>();
+    }
 
-![두번째 컷신](https://github.com/bamin0502/3D-ProJect/assets/100828741/f7efafc8-ab4d-47c1-970f-b8094676ef03)
-![두번째 컷신2](https://github.com/bamin0502/3D-ProJect/assets/100828741/d172a1f5-dd15-4ea0-8fe0-0bd5d7833cb2)
+    private void OnCutsceneEnd(PlayableDirector director)
+    {
+        // BGM을 다시 재생
+        SoundManager.instance.bgmAudioSource.Play();
+        StartCoroutine(bossCutScene());
+        playerMovement.ResumeMovement();
+    }
+    void Update()
+    {
+        StartSecondScene();
+    }
+    public void StartSecondScene()
+    {
+        if (checkObject.transform.childCount != 0 || isCutScene) return;
+        isCutScene = true;
+        MultiScene.Instance.nav.areaMask=NavMesh.AllAreas;
+        playableDirector.playableAsset = SecondCut;
+        playableDirector.Play();
+        playerMovement.StopMovement();
+        if (playableDirector.playableAsset == SecondCut)
+        {
+            // 컷신이 시작되면 BGM을 중지
+            SoundManager.instance.bgmAudioSource.Stop();
+        }
+        MultiScene.Instance.BroadCastingSecondCutSceneStart(true);
+        Debug.LogWarning("컷신 나오는지 확인용");
+    }
+    IEnumerator bossCutScene()
+    {
+        yield return new WaitForSeconds(1f);
+        MultiScene.Instance.bossObject.TryGetComponent(out MultiBoss multiBoss);
+        if (multiBoss == null) yield break;
+        Debug.LogWarning("Setting");
+        multiBoss.StartCoroutine(multiBoss.PlayerDetect());
+        multiBoss.StartCoroutine(multiBoss.ChangeTarget());
+        multiBoss.StartCoroutine(multiBoss.StartThink());
+    }
+}
+
+```
 <br>
 두 번째 컷신은 지정해둔 객체에 더 이상 자식(몬스터)가 없을 시에 다 같이 컷신이 실행될수 있도록 설정하였습니다.<br> 마찬가지로 플레이 중에는 기존 브금이 재생되지 않으며 기존에 지나갈수 없던 길을 지나갈수 있도록 NavMesh의 값을 변경시켜줘서 지나갈 수 있도록 설정하였고, 보스도 이 컷신이 끝난 시점부터 로직이 실행되도록 설정하였습니다. 
 
-![마지막 컷신 관련](https://github.com/bamin0502/3D-ProJect/assets/100828741/7a909e08-181e-46f9-8b9f-435167e7e2e5)
-<br>
-마지막 컷신은 보스의 체력이 0이 되면 실행되도록 설정하였으며 마찬가지로 다 같이 컷신이 실행될수 있도록 설정하였습니다.
-#### 3. 데이터 교환 방식 구현 및 암호화
-서버에서 원할한 데이터 교환을 위해서 Json방식으로 데이터를 주고 받을수 있도록 Json을 사용하였으며, <br>해당 Json의 값을 변경하지 못하도록 해당 Json파일을 열었을 때 AES암호화 방식으로 암호화 하였습니다. 
-<br>자세한 설명은 https://wakeup-technologydirectory.tistory.com/25을 통해서 정리해 두었습니다. 
-#### 4. 특정 오브젝트 가림 관련
-![사물안보이게하기](https://github.com/bamin0502/3D-ProJect/assets/100828741/56fc6818-0074-4890-81f9-7ea74c9410a8)
-![사물 안보이게하기2](https://github.com/bamin0502/3D-ProJect/assets/100828741/2577fef9-9274-47ba-a146-cb8e6bde52ed)
-![사물 안보이게 하기 카메라](https://github.com/bamin0502/3D-ProJect/assets/100828741/d31c37a8-4ea6-4844-8d19-ea76e2cd3685)
-![사물 안보이게 하기 카메라2](https://github.com/bamin0502/3D-ProJect/assets/100828741/2763e78f-2bdd-484b-a65a-cc71cf364f6b)
-![사물 안보이게 하기 카메라3](https://github.com/bamin0502/3D-ProJect/assets/100828741/74557e92-a9ff-4536-9f36-447e4cc26c62)
+### 세번째 컷신 스크립트
+```C#
+using UnityEngine;
+using UnityEngine.Playables;
+using UnityEngine.Timeline;
+public class FinalCut : MonoBehaviour
+{
+    //실행시킬 마지막 타임라인
+    public PlayableDirector playableDirector;
+    public TimelineAsset lastcut;
+    private bool isCutScene = false;
+    public MultiPlayerMovement playerMovement;
+    void Start()
+    {
+        MultiScene.Instance.lastPlayableDirector = playableDirector;
+        playableDirector.stopped += OnlastCutsceneEnd;
+    }
+    private void OnlastCutsceneEnd(PlayableDirector director)
+    {
+        SoundManager.instance.bgmAudioSource.Play();
+        playerMovement.StopMovement();
+    }
+    private void Update()
+    {
+        if (isCutScene || !MultiScene.Instance.bossObject) return;
+        if (!MultiScene.Instance.bossObject.TryGetComponent(out EnemyHealth enemyHealth)) return;
+        if (enemyHealth.currentHealth <= 0)
+        {
+            LastCutScene();
+        }
+    }
+    public void LastCutScene()
+    {
+        isCutScene = true;
+        playableDirector.playableAsset = lastcut;
+        playableDirector.Play();
+        if(playableDirector.playableAsset==lastcut)
+        {
+            SoundManager.instance.bgmAudioSource.Stop();
+        }
+        MultiScene.Instance.BroadCastingLastCutSceneStart(true);
+        Debug.LogWarning("마지막 컷신 확인");
+    }
+}
 
+```
+마지막 컷신은 보스의 체력이 0이 되면 실행되도록 설정하였으며 마찬가지로 다 같이 컷신이 실행될수 있도록 설정하였습니다.
+
+## 3. 데이터 교환 방식 구현 및 암호화
+```C#
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Newtonsoft.Json;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using System;
+[Serializable]
+public class PlayerStat
+{
+    public string name = "";
+    public float Level = 0;
+    public float Exp = 0;
+    public float PlayerHealth = 0;
+    public float Health = 0;
+}
+[Serializable]
+public class EnemyStat
+{
+    public float EnemyHealth = 0;
+    public float damage = 0;
+    public float Health = 0;
+}
+[Serializable]
+public class Itemdata
+{
+    public string itemName = ""; // 아이템의 이름
+    public float Health = 0; //아이템 회복량
+    public int damage = 0; //아이템 데미지
+    public float dot = 0; //아이템 지속시간 설정
+    public float sight = 0; //아이템 시야설정
+}
+[Serializable]
+public class WeaponData
+{
+    public int damage = 0;
+}
+public class DataManager : MonoBehaviour 
+{
+    public static DataManager Inst;
+    private static readonly byte[] EncryptionKey = new byte[]
+    {
+    // 32바이트(256비트) 암호화 키
+    0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF,
+    0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10,
+    0x10, 0x32, 0x54, 0x76, 0x98, 0xBA, 0xDC, 0xFE,
+    0xEF, 0xCD, 0xAB, 0x89, 0x67, 0x45, 0x23, 0x01
+    };
+    private byte[] IV = new byte[]
+    { 
+    // 16바이트(128비트) 암호화 IV
+    0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF,
+    0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10
+    };
+
+    private void Start()
+    {
+        SaveData();    
+    }
+    //여기다가 var타입으로 만들고 SaveToJson방식으로 저장시킬거임
+    private void InitializeData()
+    {
+        var playerStat = new PlayerStat
+        {
+            name = "",
+            Level = 1,
+            Exp = 0,
+            Health = 1000,
+            PlayerHealth = 1000
+        };
+        var enemyStat1 = new EnemyStat
+        {
+            EnemyHealth = 100,
+            damage = 30,
+            Health = 100
+        };
+        var enemyStat2 = new EnemyStat
+        {
+            EnemyHealth = 70,
+            damage = 20,
+            Health = 70
+        };
+
+        var enemyStat3 = new EnemyStat
+        {
+            EnemyHealth = 50,
+            damage = 40,
+            Health = 50
+        };
+        var potion = new Itemdata
+        {
+            itemName = "Potion",
+            Health = 30
+        };
+        var adrophine = new Itemdata 
+        { 
+            itemName= "adrophine",
+            damage=30,
+            dot=180
+        };
+        var weapon = new WeaponData { damage = 30 };
+        SaveToJsonEncrypted(adrophine, "Itemdata.json");
+        SaveToJsonEncrypted(potion, "Itemdata.json");
+        SaveToJsonEncrypted(playerStat, "PlayerStat.json");
+        SaveToJsonEncrypted(enemyStat1, "EnemyStat1.json");
+        SaveToJsonEncrypted(enemyStat2, "EnemyStat2.json");
+        SaveToJsonEncrypted(enemyStat3, "EnemyStat3.json");
+        SaveToJsonEncrypted(weapon, "WeaponData.json");
+    }
+    //자동으로 저장시켜줄거임
+    private void SaveToJsonEncrypted<T>(T data, string fileName)
+    {
+        string jsonData = JsonConvert.SerializeObject(data);
+        byte[] encryptedData = Encrypt(jsonData);
+        // 암호화된 데이터의 길이를 저장
+        int encryptedDataLength = encryptedData.Length;
+        // 저장할 데이터 배열 생성 (길이 정보 + 암호화된 데이터)
+        byte[] savedData = new byte[4 + encryptedDataLength];
+        // 길이 정보를 바이트 배열로 변환하여 저장
+        byte[] lengthBytes = BitConverter.GetBytes(encryptedDataLength);
+        Buffer.BlockCopy(lengthBytes, 0, savedData, 0, 4);
+        // 암호화된 데이터를 저장
+        Buffer.BlockCopy(encryptedData, 0, savedData, 4, encryptedDataLength);
+        string filePath = GetFilePath(fileName);       
+        File.WriteAllBytes(filePath, savedData);     
+        //Debug.Log("암호화된 데이터를 저장했습니다: " + filePath);
+    }
+    //자동으로 로딩시킬거임
+    private T LoadFromJsonEncrypted<T>(string fileName)
+    {
+        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);       
+        string filePath = GetFilePath(fileName);
+        byte[] savedData = File.ReadAllBytes(filePath);
+        if (savedData.Length < 4)
+        {
+            Debug.LogError("암호화된 데이터의 길이 정보가 올바르지 않습니다.");
+            return default(T);
+        }
+        // 저장된 데이터 배열에서 길이 정보를 읽어옴
+        int encryptedDataLength = BitConverter.ToInt32(savedData, 0);
+
+        if (encryptedDataLength != savedData.Length - 4)
+        {
+            Debug.LogError("암호화된 데이터의 길이가 올바르지 않습니다.");
+            return default(T);
+        }
+        // 길이 정보를 제외한 실제 암호화된 데이터 배열 생성
+        byte[] encryptedData = new byte[encryptedDataLength];
+        Buffer.BlockCopy(savedData, 4, encryptedData, 0, encryptedDataLength);
+        string decryptedJsonData = Decrypt(encryptedData); // 복호화된 JSON 데이터를 가져옵니다.
+        T data = JsonConvert.DeserializeObject<T>(decryptedJsonData);
+        return data;
+    }
+    //해당 코드를 암호화 시킴
+    private byte[] Encrypt(string data)
+    {
+        byte[] rawData = Encoding.UTF8.GetBytes(data);
+
+        using (Aes aesAlg = Aes.Create())
+        {
+            aesAlg.Key = EncryptionKey;
+            aesAlg.IV = IV;
+
+            using (MemoryStream msEncrypt = new MemoryStream())
+            {
+                using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, aesAlg.CreateEncryptor(), CryptoStreamMode.Write))
+                {
+                    csEncrypt.Write(rawData, 0, rawData.Length);
+                    csEncrypt.FlushFinalBlock();
+
+                    byte[] encryptedData = msEncrypt.ToArray();
+                    return encryptedData;
+                }
+            }
+        }
+    }
+    //해당 코드를 다시 복호화 시킬거임
+    private string Decrypt(byte[] encryptedData)
+    {
+        using (Aes aesAlg = Aes.Create())
+        {
+            aesAlg.Key = EncryptionKey;
+            aesAlg.IV = IV;
+            aesAlg.IV = IV;
+
+            using (MemoryStream msDecrypt = new MemoryStream())
+            {
+                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV), CryptoStreamMode.Write))
+                {
+                    csDecrypt.Write(encryptedData, 0, encryptedData.Length);
+                    csDecrypt.FlushFinalBlock(); 
+                }
+
+                byte[] decryptedBytes = msDecrypt.ToArray();
+                return Encoding.UTF8.GetString(decryptedBytes).TrimEnd('\0'); 
+            }
+        }
+    }
+    string GetFilePath(string fileName)
+    {        
+        return Path.Combine(Application.dataPath+"/StreamingAssets", fileName);
+    }
+
+    private void SaveData()
+    {
+        PlayerStat playerStat = LoadFromJsonEncrypted<PlayerStat>("PlayerStat.json");
+        SaveToJsonEncrypted(playerStat, "PlayerStat.json");
+        EnemyStat enemyStat1 = LoadFromJsonEncrypted<EnemyStat>("EnemyStat1.json");
+        SaveToJsonEncrypted(enemyStat1, "EnemyStat1.json");
+        EnemyStat enemyStat2 = LoadFromJsonEncrypted<EnemyStat>("EnemyStat2.json");
+        SaveToJsonEncrypted(enemyStat2, "EnemyStat2.json");
+        EnemyStat enemyStat3 = LoadFromJsonEncrypted<EnemyStat>("EnemyStat3.json");
+        SaveToJsonEncrypted(enemyStat3, "EnemyStat3.json");
+        WeaponData weaponData = LoadFromJsonEncrypted<WeaponData>("WeaponData.json");
+        Debug.Log("WeaponDamage:" + weaponData.damage);
+        SaveToJsonEncrypted(weaponData, "WeaponData.json");
+        Itemdata potion = LoadFromJsonEncrypted<Itemdata>("Itemdata.json");
+        SaveToJsonEncrypted(potion, "Itemdata.json");
+        Itemdata adrophine = LoadFromJsonEncrypted<Itemdata>("Itemdata.json");
+        SaveToJsonEncrypted(adrophine, "Itemdata.json");
+    }
+}
+```
+서버에서 원할한 데이터 교환을 위해서 Json방식으로 데이터를 주고 받을수 있도록 Json을 사용하였으며, <br>해당 Json의 값을 변경하지 못하도록 해당 Json파일을 열었을 때 AES암호화 방식으로 암호화 하였습니다. 
+해당 밑에 사진처럼 정상적으로 작동하는걸 확인할수 있습니다.<br>
+ 
+<br>또한 암호화가 적용되어있는걸 확인할수 있습니다.
+
+## 4. 특정 오브젝트 가림 관련
+#### 오브젝트 관련
+```C#
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.Rendering;
+public class HideObject : MonoBehaviour
+{
+    //숨길 오브젝트 지정
+    private HideObject _hideObject;
+    private static readonly Dictionary<Collider,HideObject>hideObjectsMap = new Dictionary<Collider, HideObject>();
+    [SerializeField] public GameObject Renderers;
+    public Collider Collider = null;
+    void Start()
+    {
+       InitHideObject(); 
+    }
+    public static void InitHideObject()
+    {
+        foreach (var obj in hideObjectsMap.Values.Where(obj => obj != null && obj.Renderers != null))
+        {
+            obj.SetVisible(true);
+            obj._hideObject = null;
+        }
+        
+        hideObjectsMap.Clear();
+        
+        foreach (var obj in FindObjectsOfType<HideObject>())
+        {
+            if (obj.Collider != null)
+            {
+                hideObjectsMap[obj.Collider]=obj;
+            }   
+        }
+    }
+    public static HideObject GetHideObject(Collider collider)
+    {
+        return hideObjectsMap.TryGetValue(collider, out var obj) ? GetRoot(obj) : null;
+    }
+    public static HideObject GetRoot(HideObject obj)
+    {
+        while (true)
+        {
+            if (obj._hideObject == null)
+                return obj;
+            else
+            {
+                obj = obj._hideObject;
+            }
+        }
+    }
+    public void SetVisible(bool visible)
+    {
+       Renderer rend= Renderers.GetComponent<Renderer>();
+
+       if (rend != null && rend.gameObject.activeInHierarchy && hideObjectsMap.ContainsKey(rend.GetComponent<Collider>()))
+       {
+           rend.shadowCastingMode = visible ? ShadowCastingMode.On : ShadowCastingMode.ShadowsOnly;
+       }
+           
+    }
+}
+
+```
+#### 카메라 관련
+```C#
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+public class ObjectHideCamera : MonoBehaviour
+{
+    public Transform target = null;
+    
+    //이 감지거리 안에 플레이어가 있으면 해당 구조물을 안보이게 할거임 
+    [SerializeField] private float sphereCastRadius = 0.5f;
+
+    private readonly RaycastHit[] hitBuffer = new RaycastHit[32];
+    
+    private List<HideObject> hiddenObjects = new List<HideObject>();
+    private List<HideObject> previouslyhiddenObjects = new List<HideObject>();
+
+    public GameObject tPlayer;
+    
+    private void LateUpdate()
+    {
+        RefreshHiddenObjects();
+
+        if (tPlayer.activeInHierarchy) return;
+        foreach (var hideable in previouslyhiddenObjects.Where(hideable 
+                     => Vector3.Distance(transform.position, hideable.transform.position) >0.1f))
+        {
+            hideable.SetVisible(true);
+        }
+
+    }
+
+
+    private void RefreshHiddenObjects()
+    {
+        if (tPlayer == null)
+        {
+            if (tPlayer != null)
+            {
+                target = tPlayer.transform;
+            }
+            Debug.LogWarning("플레이어가 없습니다!");
+            return;
+        }
+
+        var position = transform.position;
+        var toTarget= target.position - position;
+        var targetDistance = toTarget.magnitude;
+        var targetDirection = toTarget / targetDistance;
+        
+        targetDistance -= sphereCastRadius * 1.1f;
+        
+        hiddenObjects.Clear();
+        int hitCount= Physics.SphereCastNonAlloc(position, 
+            sphereCastRadius, targetDirection, hitBuffer, targetDistance, 
+            -1, QueryTriggerInteraction.Ignore);
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            var hit = hitBuffer[i];
+            var hideable = HideObject.GetHideObject(hit.collider);
+
+            if (hideable != null)
+                hiddenObjects.Add(hideable);
+        }
+
+        foreach (var hideable in hiddenObjects.Where(hideable => !previouslyhiddenObjects.Contains(hideable)))
+        {
+            hideable.SetVisible(false);
+        }
+
+        foreach (var hideable in previouslyhiddenObjects.Where(hideable => !hiddenObjects.Contains(hideable)))
+        {
+            hideable.SetVisible(true);
+        }
+
+        (hiddenObjects, previouslyhiddenObjects) = (previouslyhiddenObjects, hiddenObjects);
+        
+    }
+}
+
+```
 해당 HideObject 스크립트를 통해서 그 해당 오브젝트에 있는 Renderers를 가져오게 됩니다.<br> 
 이 상태에서 플레이어랑 오브젝트가 서로 겹치게 되면 오브젝트의 Renderers를 ShadowOnly로 바꿔서<br>
 ![장애물이 안보이게 됨](https://github.com/bamin0502/3D-ProJect/assets/100828741/3162fb50-5d4b-4d33-8d3e-f93debe4ddb5)<br>
@@ -61,25 +601,231 @@
 ![지나가면 다시 보이게 됨](https://github.com/bamin0502/3D-ProJect/assets/100828741/976c2d78-c663-45b5-af6e-5289b33e8b77)
 자연스럽게 오브젝트를 가려도 플레이어가 잘보이도록 하였습니다.
 
-#### 5. 체력 관련 제작 및 서버 동기화
+## 5. 체력 관련 제작 및 서버 동기화
 ![체력관련 소개](https://github.com/bamin0502/3D-ProJect/assets/100828741/04f4bb1b-4316-44fb-90d8-3af5d0732221)
 다음과 같이 총 3개의 체력관련 UI를 제작하였습니다. 
-##### 먼저 개인 체력바 관련 스크립트 입니다. 
-![개인 체력바](https://github.com/bamin0502/3D-ProJect/assets/100828741/088ad5c4-822b-4443-8ba3-a138834272d8)
-##### 개인 상태창 관련 스크립트입니다. 
-![개인 상태창](https://github.com/bamin0502/3D-ProJect/assets/100828741/422de077-e94f-4ad4-b261-a7307cc65533)
-![개인 상태창2](https://github.com/bamin0502/3D-ProJect/assets/100828741/4f42f70c-33a1-4270-bc25-1f333cdcf1d5)
-![개인 상태창3](https://github.com/bamin0502/3D-ProJect/assets/100828741/180c6bb9-1880-4c7f-8911-ce20c3cbf852)
-##### 팀 상태창 관련 스크립트입니다. 
-![팀 상태창](https://github.com/bamin0502/3D-ProJect/assets/100828741/2fe9599c-4e35-473d-ac91-ce462032eb11)
-![팀 상태창2](https://github.com/bamin0502/3D-ProJect/assets/100828741/660aee5e-c328-4877-9fd3-3a3de16b01be)
+### 개인 체력바 관련 스크립트
+```C#
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
+public class MultiPlayerHealthBar : MonoBehaviour
+{
+    public Image healthBar;
+    public TextMeshProUGUI healthText;
+    private MultiPlayerHealth _playerHealth;
+    private string _playerName;
+    public string playerName = "";
+    public TextMeshProUGUI nameText;
+    
+    public void CreateUiStatus(string _playerName)
+    {
+        MultiScene.Instance._players.TryGetValue(_playerName, out var playerPrefab);
+        
+        if (playerPrefab == null) return;
+        MultiPlayerHealthBar _playerHealthBar = GameObject.Find("HpBase").GetComponent<MultiPlayerHealthBar>();
+        _playerHealthBar._playerName = _playerName;
+        _playerHealth = playerPrefab.GetComponent<MultiPlayerHealth>();
+
+        if (_playerHealth != null)
+        {
+            Debug.Log(playerPrefab.name + " 체력바 생성");
+            healthText.text = _playerHealth.CurrentHealth + "/" + _playerHealth.MaxHealth;
+            UpdatePlayerHp();
+        }
+        else
+        {
+            Debug.LogError(playerPrefab.name + "체력바 생성에 실패했습니다.");
+        }
+    }
+    public void UpdatePlayerHp()
+    {
+        healthBar.fillAmount = (float)_playerHealth.CurrentHealth / _playerHealth.MaxHealth;
+        healthText.text = _playerHealth.CurrentHealth + "/" + _playerHealth.MaxHealth;
+    }
+    
+}
+
+```
+### 개인 상태창 관련 스크립트
+```C#
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+public class MultiMyStatus : MonoBehaviour
+{
+    public Image playerHpImage;
+    public string myplayerName = "";
+    public TextMeshProUGUI mynameText;
+    public Canvas mystatus;
+    [SerializeField]public GameObject mynameStatusPrefab;
+    private Camera _cam;
+    private bool isDestroyed = false;
+    private MultiPlayerHealth _playerHealth;
+    private Quaternion rotation = new (0, 0, 0, 0);
+    private GameObject nameStatus;
+    public Gradient gradient;
+    public void CreateMyStatus(string myPlayerName, Vector3 playerPosition)
+    {
+        // 각 캐릭터마다 자신만의 UI 요소를 생성하고 위치를 조정
+        nameStatus = Instantiate(mynameStatusPrefab, playerPosition + new Vector3(0, 1, 0), Quaternion.identity);
+        MultiMyStatus teamStatus = nameStatus.GetComponent<MultiMyStatus>();
+        teamStatus.myplayerName = myplayerName;
+        teamStatus.mynameText = nameStatus.GetComponentInChildren<TextMeshProUGUI>();
+        teamStatus.mynameText.text = myplayerName;
+        //플레이어 체력 관련
+        MultiScene.Instance._players.TryGetValue(myPlayerName,out var playerPrefab);
+        if (playerPrefab != null) _playerHealth = playerPrefab.GetComponent<MultiPlayerHealth>();
+        Transform playerHpTransform = nameStatus.transform.Find("Hp Image");
+        if (playerHpTransform != null)
+        {
+            playerHpImage = playerHpTransform.GetComponent<Image>(); // playerHpImage를 초기화
+        }
+        
+        // 상태창의 회전을 고정,캔버스도 회전을 막아야 함 
+        teamStatus.transform.rotation = new Quaternion(0, 180, 0, 0);
+        mystatus.transform.rotation = new Quaternion(0, 180, 0, 0);
+        // mystatus Canvas의 자식으로 추가
+        nameStatus.transform.SetParent(mystatus.transform);
+        nameStatus.transform.rotation = new Quaternion(0, 180, 0, 0);
+    }
+
+    void Start()
+    {
+        _cam = Camera.main;
+        rotation = transform.rotation;
+        // mystatus 초기화
+        mystatus = GameObject.FindGameObjectWithTag("MyStatus").GetComponent<Canvas>();
+        if (mystatus == null)
+        {
+            Debug.LogError("캔버스를 불러올 수 없습니다.");
+        }
+        GradientColorKey[] colorKeys = new GradientColorKey[6];
+        colorKeys[0].color = Color.red;
+        colorKeys[0].time = 0.0f;
+        colorKeys[1].color = Color.red;
+        colorKeys[1].time = 0.25f;
+        colorKeys[2].color = Color.yellow;
+        colorKeys[2].time = 0.25f;
+        colorKeys[3].color = Color.yellow;
+        colorKeys[3].time = 0.75f;
+        colorKeys[4].color = Color.green;
+        colorKeys[4].time = 0.75f;
+        colorKeys[5].color = Color.green;
+        colorKeys[5].time = 1f;
+        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[6];
+        for (int i = 0; i < 6; i++)
+        {
+            alphaKeys[i].alpha = 1.0f;
+            alphaKeys[i].time = colorKeys[i].time;
+        }
+        gradient = new Gradient();
+        gradient.SetKeys(colorKeys, alphaKeys);
+    }
+    private void Update()
+    {
+        if (!isDestroyed && nameStatus != null)
+        {
+            nameStatus.transform.rotation = rotation;
+        }
+    }
+    public void UpdatePlayerHp()
+    {
+        playerHpImage.fillAmount = (float)_playerHealth.CurrentHealth / _playerHealth.MaxHealth;
+        float fillAmount = (float)_playerHealth.CurrentHealth / _playerHealth.MaxHealth;
+        playerHpImage.fillAmount = fillAmount;
+        playerHpImage.color = gradient.Evaluate(fillAmount);
+    }
+    public void Awake()
+    {
+        mystatus = GameObject.FindGameObjectWithTag("MyStatus").GetComponent<Canvas>();
+    }
+    private void OnDestroy()
+    {
+        isDestroyed = true;
+    }
+}
+
+```
+### 팀 상태창 관련 스크립트
+```C#
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+public class MultiTeamstatus : MonoBehaviour
+{
+    public string playerName = "";
+    public TextMeshProUGUI nameText;
+    [SerializeField]public GridLayoutGroup gridLayoutGroup;
+    public Image playerHpImage;
+    public GameObject statusbar;
+    private MultiPlayerHealth _playerHealth;
+    public Gradient gradient;
+    
+    public void CreateTeamStatus(string PlayerName)
+    {   
+        GameObject teamStatusObject = Instantiate(statusbar, gridLayoutGroup.transform);
+        MultiTeamstatus teamStatus = teamStatusObject.GetComponent<MultiTeamstatus>();
+        MultiScene.Instance._players.TryGetValue(PlayerName, out var player);
+        _playerHealth = player!.GetComponent<MultiPlayerHealth>();
+        teamStatus.playerName = playerName;
+        teamStatus.nameText.text = playerName;
+        TextMeshProUGUI textComponent = teamStatusObject.GetComponentInChildren<TextMeshProUGUI>();
+        Transform playerHpTransform = teamStatusObject.transform.Find("PlayerHp");
+        if (playerHpTransform != null)
+        {
+            playerHpImage = playerHpTransform.GetComponent<Image>(); // playerHpImage를 초기화
+        }
+        GradientColorKey[] colorKeys = new GradientColorKey[6];
+        colorKeys[0].color = Color.red;
+        colorKeys[0].time = 0.0f;
+        colorKeys[1].color = Color.red;
+        colorKeys[1].time = 0.25f;
+        colorKeys[2].color = Color.yellow;
+        colorKeys[2].time = 0.25f;
+        colorKeys[3].color = Color.yellow;
+        colorKeys[3].time = 0.75f;
+        colorKeys[4].color = Color.green;
+        colorKeys[4].time = 0.75f;
+        colorKeys[5].color = Color.green;
+        colorKeys[5].time = 1f;
+        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[6];
+        for (int i = 0; i < 6; i++)
+        {
+            alphaKeys[i].alpha = 1.0f;
+            alphaKeys[i].time = colorKeys[i].time;
+        }
+        gradient = new Gradient();
+        gradient.SetKeys(colorKeys, alphaKeys);
+    }
+
+    public void DestroyTeamStatus(string PlayerName)
+    {
+        GameObject[] teamStatusObjects = GameObject.FindGameObjectsWithTag("TeamStatus");
+        foreach (GameObject teamStatusObject in teamStatusObjects)
+        {
+            MultiTeamstatus teamStatus = teamStatusObject.GetComponent<MultiTeamstatus>();
+            if (teamStatus.playerName.Equals(PlayerName))
+            {
+                Destroy(teamStatusObject);
+            }
+        }
+    }
+    public void UpdatePlayerHp()
+    {
+        playerHpImage.fillAmount = (float)_playerHealth.CurrentHealth / _playerHealth.MaxHealth;
+        float fillAmount = (float)_playerHealth.CurrentHealth / _playerHealth.MaxHealth;
+        playerHpImage.fillAmount = fillAmount;
+        playerHpImage.color = gradient.Evaluate(fillAmount);
+    }
+    
+}
+
+```
 맨 처음에 닉네임을 입력해서 로비씬에 입장하게 되면 해당 닉네임을 Dictionary 형식으로 만들어서 담아놓습니다. 
 그 다음 해당 닉네임을 바탕으로 설정값에 따른 닉네임과 체력을 생성하게 됩니다. 
 또한 개인 상태창과 팀 상태창은 체력 상태에 따라서 초록색, 노랑색, 빨강색으로 자동적으로 변하도록 설정하였습니다. 
-
-#### 몬스터 체력 관련 
-
 
 #### 그 외에도 자세한 코드 내역은 파일 내역중에 Script 폴더안에 넣어두었습니다.
 ##### 자세한 커밋내역은 https://github.com/bamin0502/3D-ProJect 으로 보실 수 있습니다!
