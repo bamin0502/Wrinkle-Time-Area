@@ -883,6 +883,7 @@ ALT+F4,종료 버튼을 누르면 뜨는 모달 창
 ![보스전](https://github.com/bamin0502/3D-ProJect/assets/100828741/9792bc05-3ae7-44c5-abb2-4722b87b058c)
 ![보스전2](https://github.com/bamin0502/3D-ProJect/assets/100828741/c38d4ec8-e9ef-4731-9aa7-f60ce7d843b3)
 ![보스전3](https://github.com/bamin0502/3D-ProJect/assets/100828741/45e9f7ba-d745-434b-b2bf-874ca563efc6)
+![스크린샷 2023-11-01 225718](https://github.com/bamin0502/bamin0502.github.io/assets/100828741/fcaf51fe-6651-47ed-b115-14cb72c25a2b)
 
 # 플레이 방법 소개
 - 1인에서 5인까지 가능합니다.
