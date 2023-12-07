@@ -444,7 +444,7 @@ public class DataManager : MonoBehaviour
 해당 밑에 사진처럼 정상적으로 작동하는걸 확인할수 있습니다.<br>
  
 <br>또한 암호화가 적용되어있는걸 확인할수 있습니다.
-
+![다운로드](https://github.com/bamin0502/3D-ProJect/assets/100828741/c5cfe9a3-4c3a-45df-ad41-c448af649dfd)
 ## 4. 특정 오브젝트 가림 관련
 #### 오브젝트 관련
 ```C#
