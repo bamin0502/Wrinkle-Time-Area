@@ -20,17 +20,41 @@
 <!--C#-->
 <img src="https://img.shields.io/badge/c%23-%23239120.svg?style=flat-square&logo=C-sharp&logoColor=white"/>
 
-# 담당한 구역 소개
-#### 해당 프로젝트의 팀장으로써, 코드 최적화, Time Line관련 제작 및 서버 동기화, 체력 관련 제작 및 서버 동기화, 데이터 교환 방식 구현 및 암호화, 특정 오브젝트가 플레이어에게 가리지 않도록 설정 등이 있습니다. 
+# 프로젝트 소개
+#### 해당 프로젝트의 팀장을 담당하였습니다. 
 
 #### 1. 코드 최적화 및 수정
 불필요하고 비효율적인 코드를 제거 및 리팩토링 하였습니다. 또한 다른 팀원이 한 것들을 보고 최적화 및 오류등을 중점으로 최적화 및 수정을 진행하였습니다. 
 
 #### 2. Time Line 제작 및 서버 동기화
-
+![타임라인 설명](https://github.com/bamin0502/3D-ProJect/assets/100828741/acbe8630-bde2-4e92-9247-2cd42f4f05eb)
+![첫번째 컷신](https://github.com/bamin0502/3D-ProJect/assets/100828741/9e15d72a-8b82-4900-bd3b-24b4fd1cbae9)
+![첫번째 컷신2](https://github.com/bamin0502/3D-ProJect/assets/100828741/7fb97640-8fee-447a-81e8-a8400ec02c51)
+![두번째 컷신](https://github.com/bamin0502/3D-ProJect/assets/100828741/f7efafc8-ab4d-47c1-970f-b8094676ef03)
+![두번째 컷신2](https://github.com/bamin0502/3D-ProJect/assets/100828741/d172a1f5-dd15-4ea0-8fe0-0bd5d7833cb2)
+![마지막 컷신 관련](https://github.com/bamin0502/3D-ProJect/assets/100828741/7a909e08-181e-46f9-8b9f-435167e7e2e5)
 #### 3. 데이터 교환 방식 구현 및 암호화
 
 #### 4. 특정 오브젝트 가림 관련
+
+#### 5. 체력 관련 제작 및 서버 동기화
+![체력관련 소개](https://github.com/bamin0502/3D-ProJect/assets/100828741/04f4bb1b-4316-44fb-90d8-3af5d0732221)
+다음과 같이 총 3개의 체력관련 UI를 제작하였습니다. 
+##### 먼저 개인 체력바 관련 스크립트 입니다. 
+![개인 체력바](https://github.com/bamin0502/3D-ProJect/assets/100828741/088ad5c4-822b-4443-8ba3-a138834272d8)
+##### 개인 상태창 관련 스크립트입니다. 
+![개인 상태창](https://github.com/bamin0502/3D-ProJect/assets/100828741/422de077-e94f-4ad4-b261-a7307cc65533)
+![개인 상태창2](https://github.com/bamin0502/3D-ProJect/assets/100828741/4f42f70c-33a1-4270-bc25-1f333cdcf1d5)
+![개인 상태창3](https://github.com/bamin0502/3D-ProJect/assets/100828741/180c6bb9-1880-4c7f-8911-ce20c3cbf852)
+##### 팀 상태창 관련 스크립트입니다. 
+![팀 상태창](https://github.com/bamin0502/3D-ProJect/assets/100828741/2fe9599c-4e35-473d-ac91-ce462032eb11)
+![팀 상태창2](https://github.com/bamin0502/3D-ProJect/assets/100828741/660aee5e-c328-4877-9fd3-3a3de16b01be)
+
+맨 처음에 닉네임을 입력해서 로비씬에 입장하게 되면 해당 닉네임을 Dictionary 형식으로 만들어서 담아놓습니다. 
+그 다음 해당 닉네임을 바탕으로 설정값에 따른 닉네임과 체력을 생성하게 됩니다. 
+또한 개인 상태창과 팀 상태창은 체력 상태에 따라서 초록색, 노랑색, 빨강색으로 자동적으로 변하도록 설정하였습니다. 
+
+#### 몬스터 체력 관련 
 
 
 #### 자세한 코드 내역은 파일 내역중에 Script 폴더안에 넣어두었습니다
