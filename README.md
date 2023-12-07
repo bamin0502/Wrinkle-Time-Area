@@ -47,6 +47,19 @@
 서버에서 원할한 데이터 교환을 위해서 Json방식으로 데이터를 주고 받을수 있도록 Json을 사용하였으며, <br>해당 Json의 값을 변경하지 못하도록 해당 Json파일을 열었을 때 AES암호화 방식으로 암호화 하였습니다. 
 <br>자세한 설명은 https://wakeup-technologydirectory.tistory.com/25을 통해서 정리해 두었습니다. 
 #### 4. 특정 오브젝트 가림 관련
+![사물안보이게하기](https://github.com/bamin0502/3D-ProJect/assets/100828741/56fc6818-0074-4890-81f9-7ea74c9410a8)
+![사물 안보이게하기2](https://github.com/bamin0502/3D-ProJect/assets/100828741/2577fef9-9274-47ba-a146-cb8e6bde52ed)
+![사물 안보이게 하기 카메라](https://github.com/bamin0502/3D-ProJect/assets/100828741/d31c37a8-4ea6-4844-8d19-ea76e2cd3685)
+![사물 안보이게 하기 카메라2](https://github.com/bamin0502/3D-ProJect/assets/100828741/2763e78f-2bdd-484b-a65a-cc71cf364f6b)
+![사물 안보이게 하기 카메라3](https://github.com/bamin0502/3D-ProJect/assets/100828741/74557e92-a9ff-4536-9f36-447e4cc26c62)
+
+해당 HideObject 스크립트를 통해서 그 해당 오브젝트에 있는 Renderers를 가져오게 됩니다.<br> 
+이 상태에서 플레이어랑 오브젝트가 서로 겹치게 되면 오브젝트의 Renderers를 ShadowOnly로 바꿔서<br>
+![장애물이 안보이게 됨](https://github.com/bamin0502/3D-ProJect/assets/100828741/3162fb50-5d4b-4d33-8d3e-f93debe4ddb5)<br>
+사진과 같이 그림자만 보이게 되서 자연스럽게 겹치는 문제를 해결하였고 다시 일정거리 이상 멀어지면<br>
+다시 Renderers를 On으로 전환하여서<br>
+![지나가면 다시 보이게 됨](https://github.com/bamin0502/3D-ProJect/assets/100828741/976c2d78-c663-45b5-af6e-5289b33e8b77)
+자연스럽게 오브젝트를 가려도 플레이어가 잘보이도록 하였습니다.
 
 #### 5. 체력 관련 제작 및 서버 동기화
 ![체력관련 소개](https://github.com/bamin0502/3D-ProJect/assets/100828741/04f4bb1b-4316-44fb-90d8-3af5d0732221)
