@@ -933,19 +933,6 @@ ALT+F4,종료 버튼을 누르면 뜨는 모달 창
 - Cpu= Intel i5-9500, Gpu=Geforce GTX 1070, Ram=16GB
 - Cpu= Intel i5-6500, Gpu=Geforce GTX 1050, Ram=16GB
 
-# 유로 에셋 사용 내역
-#### 해당 프로젝트에 사용된 에셋들은 전부 구매 완료된 에셋들입니다.
-- DamageNumbersPro
-- Hot Reload
-- DotWeen Pro
-- URP VFX Mega Bundle
-- Top Down Effect
-- Epic Toon VFX 2
-- 100+ Stylized Weapons Bundle
-- 100 Special Skills Effects
-- The Lost Temple
-- POLYGON Particle FX - Low Poly 3D Art by Synty       
-
 # 저작권 출처 표시 
 ### 출처 표시
 #### Font:넥슨 LV.1,LV2 고딕
